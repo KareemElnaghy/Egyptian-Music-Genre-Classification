@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Egyptian Music Genre Classification</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="../home.html">Practical Machine Deep Learning</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="../home.html">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">Egyptian Music Genre Classification</h1>
+        <ul class="list-unstyled">
+          <li>Farida Bey</li>
+          <li>Kareem Elnaghy</li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Problem Statement</h2>
+        <p>
+          Most Music Information Retrieval (MIR) research is built on Western music, leaving a significant gap 
+          for Egyptian genres like Mahraganat, Tarab, Shaabi, Egyptian Pop, and Egyptian Rap. No labeled 
+          dataset existed, no benchmark had been established, and state-of-the-art models trained on Western 
+          scales and rhythms are culturally blind to the maqam scales, tabla patterns, and mizmar timbres. 
+          This affects real applications like streaming platforms serving millions of Egyptian listeners who cannot accurately 
+          categorize or recommend local genres because their underlying models were never trained to tell them apart. 
+          Our project addresses this directly by building the first labeled Egyptian music genre dataset and adapting a pretrained audio model with 
+          culturally informed features.
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Dataset</h2>
+
+        <p>
+          We created the first labeled Egyptian music dataset consisting of 5 genres: Tarab/Classical (12.4%),
+          Egyptian Pop (12.4%), Egyptian Rap (17.3%), Mahraganat (24.4%), and Shaabi (33.5%).
+          Each example is a 30-second audio clip sourced from YouTube, with a maximum of 2 clips per song
+          to prevent data leakage. The clips are each taken from different parts of the song to ensure diversity.
+          We began with a balanced dataset with equal number of clips per genre, but once we began training and seeing the performance
+          of the model we realized that some genres were more difficult to classify than others, so we collected additional clips for the harder classes 
+          (Mahraganat and Shaabi) to improve performance. The final dataset contains 804 clips, with a 70/15/15 train/val/test split stratified by genre. 
+          The distribution of examples per genre is shown below.
+        </p>
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/dataset_distribution.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Input/Output Examples</h2>
+
+        <p>
+          The input to our model is a 30-second .wav audio clip. No preprocessing is required from the user.
+          Our pipeline converts the raw audio to a log-mel spectrogram, extracts handcrafted features, and feeds both
+          into a dual-branch architecture for classification. The output is a predicted genre label (one of the five classes) along with a confidence score.
+
+        </p>
+        
+        <h5 class="mt-5">Example of Inputs</h5>
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/inputs.png" class="img-fluid text-center">
+        </div>
+
+        <h5 class="mt-5">Example of Log Mel Spectrograms</h5>
+        <br/> <!-- Empty Line after the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/spectrogram_examples.png" class="img-fluid text-center">
+        </div>
+
+        <h5 class="mt-5">Example of an Output</h5>
+        <br/> <!-- Empty Line after the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/output.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">State of the art</h2>
+
+        <p>
+          So after surveying the available models, we narrowed it down to four main models all tested on GTZAN.
+          The simplest is <b>PiczakCNN</b>, which is a basic convolutional network that runs on spectrograms and it gets around 82% on GTZAN, decent but not great.
+          Then there's <b>CNN + LSTM</b>, which combines a CNN for extracting audio features with an LSTM to capture patterns over time and that bumps performance up to about 90%.
+          The third one is <b>CNN14</b>, also known as PANNs, which is a deep CNN that was <b>pretrained on AudioSet</b>, a massive Google dataset with over 2 million audio clips spanning 527 sound classes. It hits 91% on GTZAN.
+          And finally, <b>AST</b>, the Audio Spectrogram Transformer, which is the best performer at 95.6%. Instead of convolutions, it treats the spectrogram like an image and processes it with a transformer.
+        </p>
+        <p>  
+          We chose CNN14 as our base model because it has a good balance of performance and complexity, and the fact that it's pretrained on AudioSet means it has already learned a rich set of audio features that we can fine-tune for our specific task via transfer learning.
+        </p>
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/state_of_the_art.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Original Model from Literature</h2>
+
+        <p>
+          As we said, our chosen base model is the CNN14. First raw audio is converted to a log-mel spectrogram, passed through 6
+          convolutional blocks (each with two Conv 3x3 layers, BatchNorm, ReLU, and average pooling),
+          then through global average+max pooling to produce a 2048-dimensional embedding, and finally
+          through a fully-connected layer to 527 AudioSet classes. CNN14 avoids large intermediate FC
+          layers, keeping the parameter count low while producing a rich output.
+          When deploying this model without any tuning and just adapting the classification head, it achieves 69% accuracy (F1: 0.67).
+        </p>
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/cnn14_architecture.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Proposed Updates</h2>
+
+        <p>
+          We progressively improved the baseline through four targeted updates. Models were trained with
+          weight decay and early stopping for 80 epochs and optimized through 5-fold cross-validation.
+        </p>
+
+        <h5 class="mt-5">Update #1: Selective Layer Freezing + Hyperparameter Tuning + Basic Data Augmentation</h5>
+        <p>
+          We froze conv_blocks 1–3 to preserve low-level audio features (primitives) from AudioSet pretraining while
+          allowing deeper blocks to re-specialize for Egyptian music. We also tuned learning rate, batch
+          size, and weight decay, and introduced basic augmentation (pitch shifting, time stretching,
+          noise injection). Result: 73% accuracy / 0.72 macro F1.
+        </p>
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/update1_freezing.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+
+        <h5 class="mt-5">Update #2: Dual-Branch Feature Fusion + CBAM Channel Attention + Data Augmentation</h5>
+        <p>
+          A parallel MLP branch processes 74 hand-crafted cultural acoustic features, 24 Chroma STFT
+          coefficients, 40 MFCCs, 7 Spectral Contrast bands, and 1 ZCR, whose output is concatenated
+          with the CNN's 2048-dim embedding before the classification head. A CBAM-style channel attention
+          module inserted after conv_block6 focuses the model on the most discriminative acoustic channels
+          per genre. SpecAugment and Mixup with a warmup scheduler were added to stabilize training.
+          Result: 79% accuracy / 0.79 macro F1.
+        </p>
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/update2_dual_branch.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+
+        <h5 class="mt-5">Update #3: Full Pipeline Fine-Tuning, Regularization &amp; Increased Data</h5>
+        <p>
+          The complete pipeline was fine-tuned end-to-end with dropout regularization in the fusion head
+          (BN + ReLU + Dropout 0.4), StandardScaler fitted per cross-validation fold on handcrafted
+          features, and an expanded dataset with additional Shaabi and Mahraganat clips added since they were the most difficult to classify.
+          Result: 93% accuracy / 0.94 macro F1, a 24-point improvement over baseline.
+        </p>
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/final_architecture.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+
+        <h5 class="mt-5">Update #4: Explainability via Grad-CAM</h5>
+        <p>
+          Grad-CAM was applied to the final convolutional block to interpret predictions. The heatmaps
+          confirmed the model learned acoustically meaningful patterns per genre and traced the remaining
+          Mahraganat/Shaabi confusion to a shared low-frequency overlap between tabla and electronic kick.
+          Below are Grad-CAM visualizations for each of the five genres, followed by a side-by-side
+          comparison of the most commonly misclassified examples.
+        </p>
+
+        <br/>
+        <div class="row text-center">
+          <div class="col-md-4 mb-4">
+            <img src="resources/images/gradcam_tarab.png" class="img-fluid">
+            <p class="mt-2"><strong>Tarab / Classical</strong></p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <img src="resources/images/gradcam_egyptianpop.png" class="img-fluid">
+            <p class="mt-2"><strong>Egyptian Pop</strong></p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <img src="resources/images/gradcam_egyptianrap.png" class="img-fluid">
+            <p class="mt-2"><strong>Egyptian Rap</strong></p>
+          </div>
+          <div class="col-md-6 mb-4">
+            <img src="resources/images/gradcam_mahraganat.png" class="img-fluid">
+            <p class="mt-2"><strong>Mahraganat</strong></p>
+          </div>
+          <div class="col-md-6 mb-4">
+            <img src="resources/images/gradcam_shaabi.png" class="img-fluid">
+            <p class="mt-2"><strong>Shaabi</strong></p>
+          </div>
+        </div>
+
+        <p>
+          The comparison below shows Grad-CAM heatmaps for misclassified Mahraganat and Shaabi examples,
+          showing how both share common low-frequency activations, sourced by the percussive elements, which is what confuses them both.
+        </p>
+        <br/>
+        <div class="img-container" align="center">
+          <img src="resources/images/gradcam_misclassified.png" class="img-fluid text-center">
+        </div>
+        <br/>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Results</h2>
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/results_summary.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+
+        <p>
+          Our final model achieved 93% accuracy and 0.94 macro F1, improving 24 points over the 69% baseline.
+          Tarab/Classical and Egyptian Pop reached perfect classification while Mahraganat and Shaabi
+          remained the hardest classes due to their shared acoustic characteristics as both are Egyptian
+          street music genres. The confusion matrix and training curves are shown below.
+        </p>
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/confusion_matrix.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+
+        <br/> <!-- Empty Line before the image -->
+        <div class="img-container" align="center"> <!-- Block parent element -->
+          <img src="resources/images/training_curves.png" class="img-fluid text-center">
+        </div>
+        <br/> <!-- Empty Line after the image -->
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Technical report</h2>
+
+        <p>
+          Training and implementation details:
+        </p>
+
+        <ul>
+          <li>Programming framework: PyTorch, librosa, scikit-learn</li>
+          <li>Base model: CNN14 from PANNs, pretrained weights from qiuqiangkong/panns_transfer_to_gtzan on GitHub</li>
+          <li>Training hardware: Macbook Pro M4 Pro (16 Core GPU) </li>
+          <li>Training: up to 80 epochs with early stopping (patience = 10), each run would take around 2.5 hours</li>
+          <li>Optimization: Adam with weight decay, 5-fold stratified cross-validation</li>
+          <li>Augmentation: pitch shifting, time stretching, noise injection (SNR 10–30 dB), SpecAugment, Mixup (alpha = 0.2) with warmup scheduler</li>
+          <li>Handcrafted features: 74-dimensional vector (24 Chroma STFT + 40 MFCCs + 7 Spectral Contrast + 1 ZCR), scaled per fold with StandardScaler on train split only</li>
+          <li>Explainability: Grad-CAM on conv_block6</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">Conclusion</h2>
+
+        <p>
+          We introduced the first labeled Egyptian music dataset and a culturally-informed deep learning
+          pipeline achieving 93% accuracy and 0.94 macro F1. Our key finding was that culturally-informed
+          hand-crafted features outperformed any single architectural change, and data quality consistently
+          mattered more than model complexity. Grad-CAM confirmed the model learned acoustically meaningful
+          patterns per genre. Future work should target expanding Shaabi and Mahraganat collections,
+          exploring transformer-based audio models like AST which we mentioned earlier, incorporating maqam-specific features, and extending
+          the framework to other underrepresented Arabic music genres.
+        </p>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-left">
+        <h2 class="mt-5">References</h2>
+
+        <p>
+          References used in this project:
+        </p>
+
+        <ol>
+          <li>G. Tzanetakis and P. Cook, "Musical genre classification of audio signals," <em>IEEE Transactions on Speech and Audio Processing</em>, vol. 10, no. 5, pp. 293–302, Jul. 2002. <a href="https://ieeexplore.ieee.org/document/1021072/">https://ieeexplore.ieee.org/document/1021072/</a></li>
+          <li>Q. Kong, Y. Cao, T. Iqbal, Y. Wang, W. Wang, and M. D. Plumbley, "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition," <em>arXiv.org</em>, Dec. 21, 2019. <a href="https://arxiv.org/abs/1912.10211">https://arxiv.org/abs/1912.10211</a></li>
+          <li>B. L. Sturm, "Classification accuracy is not enough," <em>Journal of Intelligent Information Systems</em>, vol. 41, no. 3, pp. 371–406, Jul. 2013. doi: 10.1007/s10844-013-0250-y.</li>
+          <li>Y. Ba et al., "Music genre classification using deep neural networks and data augmentation," <em>Entertainment Computing</em>, vol. 53, no. 3, p. 100929, Feb. 2025.</li>
+          <li>Y. Duan, "Advanced spectrogram analysis and hyperparameter optimization for music genre recognition," in <em>Proc. Int. Conf. Music Information Retrieval (ISMIR)</em>, 2024.</li>
+          <li>K. J. Piczak, "Environmental sound classification with convolutional neural networks," in <em>Proc. IEEE 25th Int. Workshop Mach. Learn. Signal Process. (MLSP)</em>, 2015.</li>
+          <li>K. Choi, G. Fazekas, M. Sandler, and K. Cho, "Convolutional recurrent neural networks for music classification," in <em>Proc. IEEE Int. Conf. Acoust., Speech, Signal Process. (ICASSP)</em>, 2017.</li>
+          <li>Y. Gong, Y. A. Chung, and J. Glass, "AST: Audio Spectrogram Transformer," <em>Proc. Interspeech</em>, 2021.</li>
+          <li>N. Pelchat and C. M. Gelowitz, "Neural network music genre classification," in <em>Proc. IEEE Canadian Conf. Electrical &amp; Computer Engineering (CCECE)</em>, 2017, pp. 1–4.</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="../vendor/jquery/jquery.slim.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

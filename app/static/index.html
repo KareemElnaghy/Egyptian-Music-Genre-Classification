@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Egyptian Music Genre Classifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="card">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>Egyptian Music Genre Classifier</h1>
+      <p>Upload a song clip to identify its genre</p>
+    </header>
+
+    <hr class="header-rule">
+
+    <!-- Upload area -->
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Drop your audio file here or click to browse">
+      <div class="drop-icon">🎵</div>
+      <div class="drop-label">
+        Drop your audio file here<br>or <strong>click to browse</strong>
+      </div>
+      <div class="drop-hint">Accepts .wav and .mp3 &nbsp;·&nbsp; Max 50 MB</div>
+      <input type="file" id="file-input" accept=".wav,.mp3" />
+    </div>
+    <div id="file-name"></div>
+
+    <!-- Classify button -->
+    <button id="classify-btn" disabled>
+      <div class="spinner"></div>
+      <span id="btn-text">Classify</span>
+    </button>
+
+    <!-- Error box -->
+    <div id="error-box" role="alert">
+      <strong>Something went wrong</strong>
+      <span id="error-msg"></span>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+      <div class="result-genre">
+        <span class="genre-icon" id="genre-icon"></span>
+        <span class="genre-name" id="genre-name"></span>
+      </div>
+      <div class="confidence-label" id="confidence-pct"></div>
+      <div class="clips-note" id="clips-note"></div>
+
+      <div class="bar-chart" id="bar-chart"></div>
+    </div>
+
+    <span class="deco-note deco-note-left" aria-hidden="true">♪</span>
+    <span class="deco-note deco-note-right" aria-hidden="true">♫</span>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

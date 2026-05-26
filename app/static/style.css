@@ -1,0 +1,284 @@
+@font-face {
+  font-family: 'TAN Meringue';
+  src: url('/static/TAN-MERINGUE.woff2') format('woff2'),
+       url('/static/TAN-MERINGUE.ttf')   format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-texture: url('/static/background.png');
+  --primary: #1A1814;        /* dark warm charcoal — matches slide heading */
+  --gold: #C8A028;        /* warm gold — vinyl centre, CSCE badge */
+  --card-bg: rgba(244, 241, 236, 0.92);
+  --text-dark: #1A1814;
+  --text-muted: #7A7060;
+  --border:rgba(200, 160, 40, 0.4);
+
+  /* Genre colors — unchanged */
+  --classical:  #2196F3;
+  --pop: #FF9800;
+  --mahraganat: #E91E63;
+  --shaabi: #4CAF50;
+  --rap: #9C27B0;
+
+  --font-heading: 'TAN Meringue', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background-image: var(--bg-texture);
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 16px 60px;
+  color: var(--text-dark);
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(2px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(26, 24, 20, 0.15);
+  width: 100%;
+  max-width: 600px;
+  padding: 40px 36px;
+  position: relative;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.header { text-align: center; margin-bottom: 32px; }
+
+.header h1 {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+  display: inline-block;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 8px;
+}
+
+.header p {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: .95rem;
+}
+
+/* ── Decorative HR ───────────────────────────────────────── */
+.header-rule {
+  border: none;
+  border-top: 1px solid var(--gold);
+  opacity: 0.4;
+  margin-bottom: 24px;
+}
+
+/* ── Drop zone ───────────────────────────────────────────── */
+#drop-zone {
+  border: 2px dashed var(--gold);
+  background: rgba(200, 160, 40, 0.05);
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+
+#drop-zone:hover,
+#drop-zone.drag-over {
+  background: rgba(200, 160, 40, 0.10);
+}
+
+#drop-zone .drop-icon {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+}
+
+#drop-zone .drop-label {
+  color: var(--text-muted);
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+#drop-zone .drop-hint {
+  margin-top: 6px;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+#file-name {
+  margin-top: 14px;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--gold);
+  min-height: 1.2em;
+  word-break: break-all;
+}
+
+#file-input { display: none; }
+
+/* ── Button ──────────────────────────────────────────────── */
+#classify-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  background: #E8A800;
+  color: var(--primary);
+  cursor: pointer;
+  transition: filter .2s, opacity .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+#classify-btn:hover:not(:disabled) { filter: brightness(1.15); }
+#classify-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 3px solid rgba(26,24,20,.25);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Results ─────────────────────────────────────────────── */
+#results {
+  margin-top: 32px;
+  display: none;
+  animation: fadeIn .35s ease;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.result-genre {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.genre-icon { font-size: 2.2rem; }
+
+.genre-name {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.confidence-label {
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: normal;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.clips-note {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* ── Bar chart ───────────────────────────────────────────── */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+.bar-row { display: flex; flex-direction: column; gap: 3px; }
+
+.bar-label {
+  font-family: var(--font-body);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-track {
+  width: 100%;
+  height: 22px;
+  background: rgba(26, 24, 20, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  min-width: 0;
+}
+
+.bar-pct {
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+  opacity: 0;
+  transition: opacity .3s .5s;
+}
+
+/* ── Error box ───────────────────────────────────────────── */
+#error-box {
+  margin-top: 20px;
+  display: none;
+  background: rgba(198, 40, 40, 0.08);
+  border: 1px solid #C62828;
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: #c62828;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+#error-box strong { display: block; margin-bottom: 4px; }
+
+/* ── Decorative notes ────────────────────────────────────── */
+.deco-note {
+  position: absolute;
+  bottom: 12px;
+  font-size: 48px;
+  color: #4C3F1F;
+  opacity: 0.35;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
+}
+
+.deco-note-left  { left: 4px; }
+.deco-note-right { right: -3px; }
