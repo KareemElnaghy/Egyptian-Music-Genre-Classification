@@ -4,6 +4,11 @@ A deep learning system that automatically classifies Egyptian music into five ge
 
 ---
 
+## Contributors
+- [Farida Bey](https://github.com/FaridaBey)
+- [Kareem Elnaghy](https://github.com/KareemElnaghy)
+
+
 ## Table of Contents
 
 1. [Problem Statement](#problem-statement)
