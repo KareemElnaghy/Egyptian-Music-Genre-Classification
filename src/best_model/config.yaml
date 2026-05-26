@@ -1,0 +1,65 @@
+# Best model config
+# CNN14 + Dual-Branch Feature Fusion + Channel Attention
+
+backbone: cnn14
+freeze_layers: partial3
+backbone_lr_multiplier: 0.05
+use_attention: true
+use_feature_fusion: true
+fusion_hidden_dim: 256
+fusion_dropout: 0.544
+learning_rate: 0.00463
+num_epochs: 80
+early_stopping_patience: 15
+early_stopping_metric: macro_f1
+batch_size: 32
+use_augmentation: true
+aug_warmup_epochs: 10
+aug_rampup_epochs: 10
+use_pitch_shift: true
+pitch_shift_prob: 0.5
+pitch_shift_steps:
+- -2
+- -1
+- 1
+- 2
+use_time_stretch: true
+time_stretch_prob: 0.5
+time_stretch_range:
+- 0.85
+- 1.15
+use_noise: true
+noise_prob: 0.4
+noise_snr_db:
+- 15
+- 30
+use_specaugment: true
+freq_mask_param: 20
+time_mask_param: 40
+num_freq_masks: 2
+num_time_masks: 2
+use_label_smoothing: false
+use_mixup: true
+mixup_alpha: 0.126
+sample_rate: 32000
+clip_duration: 30
+n_mels: 128
+hop_length: 512
+fmax: 14000
+classes:
+- Tarab
+- Egyptian Pop
+- Mahraganat
+- Shaabi
+- Egyptian Rap
+n_classes: 5
+data_csv: /Users/kareemelnaghy/Desktop/Final Milestone/dataset/metadata.csv
+audio_dir: /Users/kareemelnaghy/Desktop/Final Milestone/dataset
+checkpoint_path: /Users/kareemelnaghy/Desktop/Final Milestone/checkpoints
+window_size: 1024
+hop_size: 320
+mel_bins: 64
+fmin: 50
+weight_decay: 0.0001
+num_workers: 2
+seed: 123
